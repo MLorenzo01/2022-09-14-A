@@ -5,7 +5,10 @@
 package it.polito.tdp.itunes;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.itunes.model.Album;
 import it.polito.tdp.itunes.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,7 +37,7 @@ public class FXMLController {
     private Button btnSet; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbA1"
-    private ComboBox<?> cmbA1; // Value injected by FXMLLoader
+    private ComboBox<Album> cmbA1; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtDurata"
     private TextField txtDurata; // Value injected by FXMLLoader
@@ -47,17 +50,40 @@ public class FXMLController {
 
     @FXML
     void doComponente(ActionEvent event) {
+    	if(cmbA1.getValue() == null) {
+    		txtResult.setText("Scegliere l'album nel menu a tendina");
+    		return;
+    	}
+    	String s = model.getComponenteConnessa(cmbA1.getValue());
+    	txtResult.appendText(s);
     	
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	try {
+    		int durata = Integer.parseInt(txtDurata.getText());
+    		String s = model.creaGrafo(durata);
+    		txtResult.setText(s);
+    		cmbA1.getItems().addAll(model.getVertexSet());
+    	}catch(NumberFormatException e) {
+    		txtResult.setText("Inserire la durata in modo corretto");
+    	}
     	
     }
 
     @FXML
     void doEstraiSet(ActionEvent event) {
-
+    	try {
+    	int durata = Integer.parseInt(txtX.getText());
+    	ArrayList<Album> lista = model.trovaMaggiore(durata, cmbA1.getValue());
+    	txtResult.appendText("\n");
+    	for(Album a: lista) {
+    		txtResult.appendText("\n" + a.getTitle());
+    	}
+    	}catch(NumberFormatException e) {
+    		txtResult.appendText("Inserire la durata massima correttamente");
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
